@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, useMatch } from 'react-router-dom';
 import Home from './Pages/Student/Home/Home';
 import CoursesList from './Pages/Student/CoursesList/CoursesList';
 import CourseDetailsPage from './Pages/Student/CourseDetailsPage/CourseDetailsPage';
@@ -11,10 +11,25 @@ import DashBoard from './Pages/Admin/DashBoard/DashBoard';
 import AddCourse from './Pages/Admin/AddCourse/AddCourse';
 import MyCourses from './Pages/Admin/MyCourses/MyCourses';
 import StudentsEnrolled from './Pages/Admin/StudentsEnrolled/StudentsEnrolled';
+import Navbar from './Components/Student/Navbar/Navbar';
 
 const App = () => {
+
+
+  const isAdminRoute = useMatch('/admin/*')
+
+
+
   return (
-    <div>
+    <div className='text-default min-h-screen bg-white' >
+
+
+      {
+        !isAdminRoute && <Navbar/>
+      }
+
+
+     
       <Routes>
         <Route  path='/' element= {<Home/>} />
         <Route  path='/courseList' element={<CoursesList/>} />
