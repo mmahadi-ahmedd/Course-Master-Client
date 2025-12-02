@@ -37,3 +37,18 @@
     line-height: 21px;
   }
 }
+
+
+@layer utilities {
+  .fancy-text {
+    background: linear-gradient(90deg, #4A3AFF, #00D2FF);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+}
+
+.grid-auto {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem; /* optional */
+}
