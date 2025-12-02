@@ -7,7 +7,7 @@ import { AppContext } from '../../../Context/AppContext';
 const Navbar = () => {
 
 
-    const {navigate} = useContext(AppContext)
+    const {navigate, isAdmin} = useContext(AppContext)
 
     const isCourseListPage = location.pathname.includes('/courseList');
     const {openSignIn} = useClerk()
@@ -22,7 +22,7 @@ const Navbar = () => {
                    {user && <>
                    
                    
-                   <button>Become Admin</button>
+                   <button onClick = {()=>{navigate('/admin')}} >{isAdmin ? 'Admin Dashboard' : 'Become Admin'}</button>
                     | <Link to='myEnrollments' > My Enrollments </Link>
                     </>
                     }
@@ -39,7 +39,7 @@ const Navbar = () => {
                     {user && <>
                    
                    
-                   <button>Become Admin</button>
+                   <button onClick= {()=>{navigate('/admin')}} >{isAdmin ? 'Admin Dashboard' : 'Become Admin'}</button>
                     | <Link to='myEnrollments' > My Enrollments </Link>
                     </>
                     }
