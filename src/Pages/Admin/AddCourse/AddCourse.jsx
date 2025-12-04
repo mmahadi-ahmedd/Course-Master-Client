@@ -52,6 +52,49 @@ const AddCourse = () => {
         }
     };
 
+    const handleLecture = (action, chapterId, lectureIndex)=>{
+        if(action === 'add'){
+            setCurrentChapterId(chapterId);
+            setShowPopUp(true);
+        } else if (action === 'remove'){
+            setChapters(
+                chapters.map((chapter)=>{
+                    if(chapter.chapterId === chapterId){
+                        chapter.chapterContent.splice(lectureIndex,1);
+                    }
+                    return chapter;
+                })
+            );
+        }
+    };
+
+    const addLecture = ()=>{
+        setChapters(
+            chapters.map((chapter)=>{
+                if(chapter.chapterId === currentChapterId){
+                    const newLecture = {
+                        ...lectureDettails,
+                        lectureOrder : chapter.chapterContent.length > 0?chapter.chapterContent.slice(-1)[0].lectureOrder + 1 : 1,
+                        lectureId : uniqid()
+                    };
+                    chapter.chapterContent.push(newLecture);
+                }
+                return chapter;
+            })
+        );
+        setShowPopUp(false);
+        setLectureDettails({
+            lectureTitle:'',
+            lectureDuration:'',
+            lectureUrl:'',
+            isPreviewFree: false,
+        });
+    };
+
+    const handleSubmit = async (e)=>{
+        e.preventDefault()
+    };
+
     useEffect(() => {
         if (!quillRef.current && editorRef.current) {
             quillRef.current = new Quill(editorRef.current,
@@ -66,7 +109,7 @@ const AddCourse = () => {
 
     return (
         <div className='h-screen text-black overflow-scroll flex flex-col items-start justify-between md:p-8 md:pb-0 p-4 pt-8 pb-0' >
-            <form className='flex flex-col gap-4 max-w-md w-full text-gray-500' >
+            <form onSubmit={handleSubmit} className='flex flex-col gap-4 max-w-md w-full text-gray-500' >
                 <div className='flex flex-col gap-1' >
                     <p>Course Title</p>
                     <input onChange={e => setCourseTitle(e.target.value)} value={courseTitle} type="text" placeholder='Type here' className='outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500 ' required />
@@ -100,13 +143,17 @@ const AddCourse = () => {
                     {
                         chapters.map((chapter, chapterIndex)=>(
                             <div key={chapterIndex} className='bg-white border rounded-lg mb-4' >
-                                <div className='flex justify-betwen items-center p-4 border-b' >
+                                <div className='flex justify-between items-center p-4 border-b' >
                                 <div className='flex items-center'>
-                                    <img src={assets.dropdown_icon} width={14} alt="" className={`mr-2 cursor-pointer transition-all ${chapter.collapsed && "-rotate-90"}`} />
+                                    <img
+                                    onClick={()=> handleChapter('toggle', chapter.chapterId)}
+                                    src={assets.dropdown_icon} width={14} alt="" className={`mr-2 cursor-pointer transition-all ${chapter.collapsed && "-rotate-90"}`} />
                                     <span className='font-semibold' >{chapterIndex + 1}{chapter.chapterTitle}</span>
                                 </div>
                                 <span className='text-gray-500' >{chapter.chapterContent.length} Lectures </span>
-                                <img src={assets.cross_icon} alt="" className='cursor-pointer' />
+                                <img 
+                                onClick={()=>handleChapter('remove', chapter.chapterId)}
+                                src={assets.cross_icon} alt="" className='cursor-pointer' />
                                 </div>
                                 {
                                     !chapter.collapsed && (
@@ -114,10 +161,12 @@ const AddCourse = () => {
                                             {chapter.chapterContent.map((lecture, lectureIndex)=>(
                                                 <div key={lectureIndex} className='flex justify-between items-center md-2 ' >
                                                     <span>{lectureIndex + 1}{lecture.lectureTitle}-{lecture.lectureDuration} mins - <a href={lecture.lectureUrl} target="_blank" className='text-blue-500'>Link</a>{lecture.isPreviewFree ? 'Free Preview' : 'Paid'}</span>
-                                                    <img src={assets.cross_icon} alt="" className='cursor-pointer'/>
+                                                    <img src={assets.cross_icon} alt="" 
+                                                    onClick={()=>handleLecture('remove',chapter.chapterId, lectureIndex)}
+                                                    className='cursor-pointer'/>
                                                 </div>
                                             ))}
-                                            <div className='Inline-flex bg-gray-100 p-2 rounded cursor-pointer mt-2 ' >
+                                            <div className='Inline-flex bg-gray-100 p-2 rounded cursor-pointer mt-2 ' onClick={()=>handleLecture('add', chapter.chapterId)} >
                                                  + Add Lecture
                                             </div>
                                         </div>
@@ -165,7 +214,7 @@ const AddCourse = () => {
                                         onChange={(e)=>setLectureDettails({...lectureDettails, isPreviewFree: e.target.value})} />
                                     </div>
 
-                                    <button type='button' className='w-full bg-blue-400 text-white px-4 py-2 rounded' >Add</button>
+                                    <button type='button' className='w-full bg-blue-400 text-white px-4 py-2 rounded' onClick={addLecture} >Add</button>
 
                                     <img onClick={()=>setShowPopUp(false)} src={assets.cross_icon} className='absolute top-4 right-4 w-4 cursor-pointer' alt="" />
 
